@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.time.LocalDate;
+import java.util.List;
 
 public class Paciente {
     private Integer id;
@@ -11,6 +13,7 @@ public class Paciente {
     private Domicilio domicilio;
     private LocalDate fechaAlta;
     private ObraSocial obraSocial;
+    private List<Turno> listaTurnos;
 
 
     public Paciente(Integer id, String nombre, String apellido, Integer dni, int cuil ,int edad, String email, LocalDate fechaAlta, Domicilio domicilio) {
@@ -23,6 +26,7 @@ public class Paciente {
         this.cuil = cuil;
         this.domicilio = domicilio;
         this.fechaAlta = fechaAlta;
+        this.listaTurnos = new ArrayList<>();
 
 
     }
@@ -38,70 +42,53 @@ public class Paciente {
         this.domicilio = domicilio;
         this.fechaAlta = fechaAlta;
         this.obraSocial = obraSocial;
+        this.listaTurnos = new ArrayList<>();
 
     }
 
-    public int getCuil() {
-        return cuil;
+    public void agregarTurno(Turno t){
+        this.listaTurnos.add(t);
     }
 
-    public void setCuil(int cuil) {
-        this.cuil = cuil;
+    public List<Turno> getListaTurnos() {
+        return listaTurnos;
     }
 
+    public int getCuil() {return cuil;}
 
-    public String getNombre() {
-        return this.nombre;
-    }
+    public void setCuil(int cuil) {this.cuil = cuil;}
 
-    public Integer getId() {
-        return this.id;
-    }
 
-    public String getApellido() {
-        return apellido;
-    }
+    public String getNombre() {return this.nombre;}
 
-    public Integer getDni() {
-        return dni;
-    }
+    public Integer getId() {return this.id;}
+
+    public String getApellido() {return apellido;}
+
+    public Integer getDni() {return dni;}
 
     public int getEdad() {return edad;}
 
     public Domicilio getDomicilio() {return domicilio;}
 
-    public String getEmail() {
-        return email;
-    }
+    public String getEmail() {return email;}
 
 
-    public LocalDate getFechaAlta() {
-        return fechaAlta;
-    }
+    public LocalDate getFechaAlta() {return fechaAlta;}
 
 
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public void setId(Integer id) {this.id = id;}
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public void setNombre(String nombre) {this.nombre = nombre;}
 
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
+    public void setApellido(String apellido) {this.apellido = apellido;}
 
-    public void setDni(Integer dni) {
-        this.dni = dni;
-    }
+    public void setDni(Integer dni) {this.dni = dni;}
 
     public void setEdad(int edad) {this.edad = edad; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public void setEmail(String email) {this.email = email;}
 
     public void setDomicilio(Domicilio domicilio) {this.domicilio = domicilio;}
 
