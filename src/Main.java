@@ -1,3 +1,4 @@
+import excepciones.ClinicaException;
 import modelo.*;
 import repositorio.*;
 import servicio.*;
@@ -8,27 +9,25 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        // El Scanner es nuestra oreja: sirve para escuchar lo que el usuario escribe
         Scanner sc = new Scanner(System.in);
-
-
-        // PREPARACIÓN DE LAS CAPAS
 
         PacienteRepositorio repoPaciente = new PacienteRepositorio();
         OdontologoRepositorio repoOdonto = new OdontologoRepositorio();
         TurnoRepositorio repoTurno = new TurnoRepositorio();
 
-
         ServicioPaciente sPaciente = new ServicioPaciente(repoPaciente);
         ServicioOdontologo sOdonto = new ServicioOdontologo(repoOdonto);
         ServicioTurno sTurno = new ServicioTurno(repoTurno, sPaciente, sOdonto);
 
-        // CARGA DE DATOS DE PRUEBA
-        sOdonto.registrarOdontologo(new Odontologo(123, "Joaquin", "Rodriguez", "MT1345"));
-        sPaciente.registrarPaciente(new Paciente(1, "Juan", "Gonzalez", 111111, 2011111118L, 40, "juan@email.com", LocalDate.now(), null));
+        try {
+            sOdonto.registrarOdontologo(new Odontologo(123, "Joaquin", "Rodriguez", "MT1345"));
+            sPaciente.registrarPaciente(new Paciente(1, "Juan", "Gonzalez", 111111, 2011111118L, 40, "juan@email.com", LocalDate.now(), null));
+        } catch (ClinicaException e) {
+            System.out.println("❌ Error al cargar datos de prueba: " + e.getMessage());
+        }
 
-        // MENÚ PRINCIPAL
         int opcion = -1;
+
         while (opcion != 0) {
             System.out.println("\n==============================================");
             System.out.println("        SISTEMA CLÍNICA       ");
@@ -59,9 +58,10 @@ public class Main {
                     System.out.println("❌ Opción inválida, probá de nuevo.");
             }
         }
+
+        sc.close();
     }
 
-    // --- SUBMENÚ DE PACIENTES ---
     public static void menuPacientes(ServicioPaciente sP, Scanner sc) {
         System.out.println("\n---  SECCIÓN PACIENTES ---");
         System.out.println("1. Alta  2. Listar  3. Baja  4. Volver");
@@ -69,38 +69,60 @@ public class Main {
         sc.nextLine();
 
         if (opP == 1) {
-            System.out.print("Nombre: "); String nom = sc.nextLine();
-            System.out.print("Apellido: "); String ape = sc.nextLine();
-            System.out.print("DNI: "); int dni = sc.nextInt();
-            System.out.print("CUIL: "); long cuil = sc.nextLong();
-            System.out.print("Edad: "); int edad = sc.nextInt();
+            System.out.print("Nombre: ");
+            String nom = sc.nextLine();
+
+            System.out.print("Apellido: ");
+            String ape = sc.nextLine();
+
+            System.out.print("DNI: ");
+            int dni = sc.nextInt();
+
+            System.out.print("CUIL: ");
+            long cuil = sc.nextLong();
+
+            System.out.print("Edad: ");
+            int edad = sc.nextInt();
             sc.nextLine();
-            System.out.print("Email: "); String email = sc.nextLine();
 
+            System.out.print("Email: ");
+            String email = sc.nextLine();
 
-            System.out.print("Nombre Obra Social: "); String nombreOS = sc.nextLine();
-            System.out.print("Plan: "); String planOS = sc.nextLine();
-            System.out.print("Nro Afiliado: "); String nroOS = sc.nextLine();
+            System.out.print("Nombre Obra Social: ");
+            String nombreOS = sc.nextLine();
+
+            System.out.print("Plan: ");
+            String planOS = sc.nextLine();
+
+            System.out.print("Nro Afiliado: ");
+            String nroOS = sc.nextLine();
 
             ObraSocial osNueva = new ObraSocial(nombreOS, planOS, nroOS);
 
-
-            sP.registrarPaciente(new Paciente(0, nom, ape, dni, cuil, edad, email, LocalDate.now(), null, osNueva));
-
-            System.out.println("✅ Paciente cargado con Obra Social.");
+            try {
+                sP.registrarPaciente(new Paciente(0, nom, ape, dni, cuil, edad, email, LocalDate.now(), null, osNueva));
+                System.out.println("✅ Paciente cargado con Obra Social.");
+            } catch (ClinicaException e) {
+                System.out.println("❌ " + e.getMessage());
+            }
 
         } else if (opP == 2) {
             System.out.println("\nLista de Pacientes en sistema:");
             sP.listarTodos().forEach(System.out::println);
+
         } else if (opP == 3) {
             System.out.print("Ingrese CUIL del paciente a borrar: ");
             long cuilElim = sc.nextLong();
-            sP.eliminarPaciente(cuilElim);
-            System.out.println("✅ Proceso de baja terminado.");
+
+            try {
+                sP.eliminarPaciente(cuilElim);
+                System.out.println("✅ Proceso de baja terminado.");
+            } catch (ClinicaException e) {
+                System.out.println("❌ " + e.getMessage());
+            }
         }
     }
 
-    // --- SUBMENÚ DE ODONTÓLOGOS ---
     public static void menuOdontologos(ServicioOdontologo sO, Scanner sc) {
         System.out.println("\n--- ️ SECCIÓN ODONTÓLOGOS ---");
         System.out.println("1. Alta  2. Listar  3. Volver");
@@ -108,16 +130,26 @@ public class Main {
         sc.nextLine();
 
         if (op == 1) {
-            System.out.print("Nombre: "); String nom = sc.nextLine();
-            System.out.print("Apellido: "); String ape = sc.nextLine();
-            System.out.print("Matrícula: "); String mat = sc.nextLine();
-            sO.registrarOdontologo(new Odontologo(0, nom, ape, mat));
+            System.out.print("Nombre: ");
+            String nom = sc.nextLine();
+
+            System.out.print("Apellido: ");
+            String ape = sc.nextLine();
+
+            System.out.print("Matrícula: ");
+            String mat = sc.nextLine();
+
+            try {
+                sO.registrarOdontologo(new Odontologo(0, nom, ape, mat));
+            } catch (ClinicaException e) {
+                System.out.println("❌ " + e.getMessage());
+            }
+
         } else if (op == 2) {
             sO.listarOdontologos().forEach(System.out::println);
         }
     }
 
-    // --- SUBMENÚ DE TURNOS ---
     public static void menuTurnos(ServicioTurno sT, ServicioPaciente sP, ServicioOdontologo sO, Scanner sc) {
         System.out.println("\n---  SECCIÓN TURNOS ---");
         System.out.println("1. Agendar Turno  2. Ver todos  3. Volver");
@@ -125,36 +157,41 @@ public class Main {
         sc.nextLine();
 
         if (opT == 1) {
-            System.out.print("Ingrese CUIL del paciente: ");
-            long cuil = sc.nextLong();
-            Paciente p = sP.buscarPorCuil(cuil);
+            try {
+                System.out.print("Ingrese CUIL del paciente: ");
+                long cuil = sc.nextLong();
 
-            System.out.print("Ingrese ID del odontólogo: ");
-            long idOdonto = sc.nextLong();
-            Odontologo o = sO.buscarPorId(idOdonto);
+                Paciente p = sP.buscarPorCuil(cuil);
 
-            if (p != null && o != null) {
+                System.out.print("Ingrese ID del odontólogo: ");
+                long idOdonto = sc.nextLong();
+
+                Odontologo o = sO.buscarPorId(idOdonto);
+
                 System.out.print("ID del Turno: ");
                 int idTurno = sc.nextInt();
-                sc.nextLine(); // Limpieza de buffer
+                sc.nextLine();
 
-                // Creamos el turno con la fecha de hoy y una hora fija para probar
                 Turno nuevoTurno = new Turno(idTurno, LocalDate.now(), LocalTime.of(10, 0), p, o);
 
-                // AGENDAMOS DE VERDAD
                 sT.agendarTurno(nuevoTurno);
+
                 System.out.println("✅ Turno guardado en el sistema.");
-            } else {
-                System.out.println("❌ Error: El paciente o el odontólogo no existen.");
+
+            } catch (Exception e) {
+                System.out.println("❌ " + e.getMessage());
             }
+
         } else if (opT == 2) {
             System.out.println("\n--- Lista de Turnos Agendados ---");
+
             if (sT.listarTodosLosTurnos().isEmpty()) {
                 System.out.println("No hay turnos registrados todavía.");
             } else {
                 sT.listarTodosLosTurnos().forEach(t -> {
-                    System.out.println("Turno #" + t.getId() + " | Paciente: " + t.getPaciente().getNombre() +
-                            " | Odontólogo: " + t.getOdontologo().getNombre());
+                    System.out.println("Turno #" + t.getId()
+                            + " | Paciente: " + t.getPaciente().getNombre()
+                            + " | Odontólogo: " + t.getOdontologo().getNombre());
                 });
             }
         }
